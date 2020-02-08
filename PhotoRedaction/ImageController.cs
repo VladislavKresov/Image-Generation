@@ -24,7 +24,7 @@ namespace PhotoRedaction
             g.DrawImage(image, 0, 0, image.Width, image.Height);
         }
                       
-        public static void grey(Bitmap image)
+        public static void gray(Bitmap image)
         {
             ColorMatrix cm = new ColorMatrix();
             cm.Matrix00 = cm.Matrix01 = cm.Matrix02 =

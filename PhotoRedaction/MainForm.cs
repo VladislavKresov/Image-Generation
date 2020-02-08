@@ -14,8 +14,10 @@ namespace PhotoRedaction
     public partial class MainForm : Form
     {
         private bool showFrames;
-        private int pictDefaultX;
-        private int pictDefaultY;
+        private int pictLeftX;
+        private int pictLeftY;
+        private int pictRightX;
+        private int pictRightY;
         private int countPictures = 0;
         private int currentNumber;
         private MainFile mainFile;
@@ -23,11 +25,9 @@ namespace PhotoRedaction
         private Bitmap currentRedactedImage;
         private ImageData imageData;
         private string currentPath;
-        private string writedFilePath;
         private List<int> currentFrames;
         private List<int> changes;
         private string[] lines;
-
 
         public MainForm()
         {
@@ -41,34 +41,38 @@ namespace PhotoRedaction
         {
             try
             {
-                string[] lastSaves = MainFile.pullSavesLine().Split(',');
-                mainFile = new MainFile(lastSaves[0]);
-                currentNumber = 0; //int.Parse(lastSaves[1]);
-                writedFilePath = lastSaves[2];
+                string lastPath = MainFile.pullSavesLine();
+                mainFile = new MainFile(lastPath);
             }
             catch
             {
-                currentNumber = 0;
                 mainFile = new MainFile(String.Empty);
-                writedFilePath = String.Empty;
+                BTN_Prev.Enabled = false;
+                BTN_Next.Enabled = false;
+                BTN_SaveAll.Enabled = false;
             }
+            currentNumber = 0;
         }
 
         private void init()
         {
             if (File.Exists(mainFile.getPath()))
             {
-                showFrames = checkBoxFrames.Checked;
-                TB_PathToFile.Text = mainFile.getPath();
-                if (!writedFilePath.Equals(String.Empty))
-                    TB_PathToSave.Text = writedFilePath;
+                showFrames = checkBoxFrames.Checked;               
                 lines = mainFile.getAllLines().ToArray();
                 imageData = new ImageData(lines);
                 countPictures = imageData.getCount();
-                pictDefaultX = pictureBoxLeft.Width;
-                pictDefaultY = pictureBoxLeft.Height;
+                pictLeftX = panelLeft.Width;
+                pictLeftY = panelLeft.Height;
+                pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
+                pictRightX = panelRight.Width;
+                pictRightY = panelRight.Height;
+                pictureBoxRight.Size = new Size(pictRightX, pictRightY);
                 comboBoxMode.Enabled = true;
                 changes = new List<int>();
+                BTN_Prev.Enabled = false;
+                BTN_Next.Enabled = false;
+                BTN_SaveAll.Enabled = false;
                 update();
             }
         }
@@ -119,7 +123,7 @@ namespace PhotoRedaction
                         ImageController.darken(currentRedactedImage);
                         break;
                     case 4://оттенки серого
-                        ImageController.grey(currentRedactedImage);
+                        ImageController.gray(currentRedactedImage);
                         break;
                     case 5://Блики
                         ImageController.glare(currentRedactedImage);
@@ -188,7 +192,7 @@ namespace PhotoRedaction
             panelFormBackground.Enabled = false;
             await Task.Run(() =>
             {
-                string pathToSave = TB_PathToSave.Text;
+                string pathToSave = mainFile.getPath();
                 string directory, fileName;
                 if (File.Exists(pathToSave))
                 {
@@ -225,7 +229,7 @@ namespace PhotoRedaction
                                     ImageController.darken(curImg);
                                     break;
                                 case 4://оттенки серого
-                                    ImageController.grey(curImg);
+                                    ImageController.gray(curImg);
                                     break;
                                 case 5://Блики
                                     ImageController.glare(curImg);
@@ -270,43 +274,10 @@ namespace PhotoRedaction
             panelFormBackground.Enabled = true;
         }
 
-        private void BTN_SaveFile_Click(object sender, EventArgs e)
-        {
-            string path = TB_PathToFile.Text;
-
-            if (!File.Exists(path))
-                MessageBox.Show("Неверно указан путь к файлу", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                mainFile = new MainFile(path);
-                init();
-            }
-        }
-
-        private void BTN_ChooseFile_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                string path = ofd.FileName;
-                try
-                {
-                    mainFile = new MainFile(path);
-                    init();
-                }
-                catch
-                {
-                    MessageBox.Show("Невозможно открыть выбранный файл", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (mainFile != null)
-                mainFile.pushSavesLine(currentNumber, writedFilePath);
+                mainFile.pushSavesLine();
         }
 
         private void BTN_Prew_Click(object sender, EventArgs e)
@@ -317,13 +288,13 @@ namespace PhotoRedaction
                 BTN_Next.Enabled = true;
 
                 if (currentNumber == 0)
-                    BTN_Prew.Enabled = false;
+                    BTN_Prev.Enabled = false;
 
                 update();
             }
             else
             {
-                BTN_Prew.Enabled = false;
+                BTN_Prev.Enabled = false;
             }
         }
 
@@ -332,7 +303,7 @@ namespace PhotoRedaction
             if (currentNumber < countPictures - 1)
             {
                 currentNumber++;
-                BTN_Prew.Enabled = true;
+                BTN_Prev.Enabled = true;
 
                 if (currentNumber == countPictures - 1)
                     BTN_Next.Enabled = false;
@@ -347,49 +318,16 @@ namespace PhotoRedaction
 
         private void trackBarLeft_Scroll(object sender, EventArgs e)
         {
-            int with = (int)(pictDefaultX * (1f + 0.1 * trackBarLeft.Value));
-            int height = (int)(pictDefaultY * (1f + 0.1 * trackBarLeft.Value));
-            pictureBoxLeft.Size = new Size(with, height);
+            pictLeftX = (int)(panelLeft.Width * (1f + 0.1 * trackBarLeft.Value));
+            pictLeftY = (int)(panelLeft.Height * (1f + 0.1 * trackBarLeft.Value));
+            pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
         }
 
         private void trackBarRight_Scroll(object sender, EventArgs e)
         {
-            int with = (int)(pictDefaultX * (1f + 0.1 * trackBarRight.Value));
-            int height = (int)(pictDefaultY * (1f + 0.1 * trackBarRight.Value));
-            pictureBoxRight.Size = new Size(with, height);
-        }
-
-        private void BTN_SavePathToOut_Click(object sender, EventArgs e)
-        {
-            string path = TB_PathToSave.Text;
-
-            if (!File.Exists(path))
-                MessageBox.Show("Неверно указан путь к файлу", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                writedFilePath = path;
-                init();
-            }
-        }
-
-        private void BTN_ChooseOut_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-
-            if (ofd.ShowDialog() == DialogResult.OK)
-            {
-                string path = ofd.FileName;
-                if(File.Exists(path))
-                {
-                    writedFilePath = path;
-                    init();
-                }
-                else
-                {
-                    MessageBox.Show("Невозможно открыть выбранный файл", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
+            pictRightX = (int)(panelRight.Width * (1f + 0.1 * trackBarRight.Value));
+            pictRightY = (int)(panelRight.Height * (1f + 0.1 * trackBarRight.Value));
+            pictureBoxRight.Size = new Size(pictRightX, pictRightY);
         }
 
         private void checkBoxFrames_CheckedChanged(object sender, EventArgs e)
@@ -425,5 +363,42 @@ namespace PhotoRedaction
             saveAllPictures();
         }
 
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                string path = ofd.FileName;
+                try
+                {
+                    mainFile = new MainFile(path);
+                    init();
+                }
+                catch
+                {
+                    MessageBox.Show("Невозможно открыть выбранный файл", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void panelRight_SizeChanged(object sender, EventArgs e)
+        {
+            if(pictRightX<panelRight.Width)
+                pictRightX = panelRight.Width;
+            if(pictRightY<panelRight.Height)
+                pictRightY = panelRight.Height;
+            pictureBoxRight.Size = new Size(pictRightX, pictRightY);
+        }
+
+        private void panelLeft_SizeChanged(object sender, EventArgs e)
+        {
+            if(pictLeftX<panelLeft.Width)
+                pictLeftX = panelLeft.Width;
+            if(pictLeftY<panelLeft.Height)
+                pictLeftY = panelLeft.Height;      
+            pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
+        }
     }
 }

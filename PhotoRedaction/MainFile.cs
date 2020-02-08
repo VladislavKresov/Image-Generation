@@ -51,10 +51,10 @@ namespace PhotoRedaction
             return parsedData;
         }
 
-        public void pushSavesLine(int line, string pathToWrite)
+        public void pushSavesLine()
         {
-            using (StreamWriter stream = new StreamWriter(SAVEFILE_PATH))
-                stream.Write(PATH + "," + line + "," + pathToWrite);
+            using (StreamWriter stream = new StreamWriter(SAVEFILE_PATH,false))
+                stream.Write(PATH);
         }
 
         public static string pullSavesLine()
