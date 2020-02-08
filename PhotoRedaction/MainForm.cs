@@ -62,7 +62,7 @@ namespace PhotoRedaction
                 TB_PathToFile.Text = mainFile.getPath();
                 if (!writedFilePath.Equals(String.Empty))
                     TB_PathToSave.Text = writedFilePath;
-                lines = mainFile.getAllLines();
+                lines = mainFile.getAllLines().ToArray();
                 imageData = new ImageData(lines);
                 countPictures = imageData.getCount();
                 pictDefaultX = pictureBoxLeft.Width;
@@ -201,7 +201,8 @@ namespace PhotoRedaction
                     fileName = @"new data.txt";
                 }
                 using (StreamWriter stream = new StreamWriter(directory + @"\" + fileName, true))
-                {
+                {                
+                    stream.WriteLine("");
                     for (int i = 0; i < imageData.getCount(); i++)
                     {
                         Bitmap curImg = new Bitmap(imageData.getPath(i));
@@ -251,15 +252,20 @@ namespace PhotoRedaction
                         }
 
                         string imgPath = directory + @"\mod" + i + ".jpg";
-                        if (File.Exists(imgPath))
-                            imgPath = directory+ @"\" + Path.GetFileNameWithoutExtension(imgPath) + "_" + i + ".jpg";
+                        while (File.Exists(imgPath))
+                        {
+                            int k = 1;
+                            imgPath = directory + @"\" + Path.GetFileNameWithoutExtension(imgPath) + "_" + k + ".jpg";
+                            k++;
+                        }
+                            
                         curImg.Save(imgPath);
                         stream.WriteLine(imgPath+coordinates);
 
                     }
                 }
             });
-
+            changes.Clear();
             BTN_SaveAll.Text = "Сохранить все";
             panelFormBackground.Enabled = true;
         }

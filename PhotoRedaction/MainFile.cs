@@ -86,15 +86,17 @@ namespace PhotoRedaction
             return count;
         }
 
-        public string[] getAllLines()
+        public List<string> getAllLines()
         {
-            string[] lines = new string[getCountLines()];
+            List<string> lines = new List<string>(getCountLines());
 
             using (StreamReader sr = new StreamReader(PATH))
             {
-                for (int i = 0; i < lines.Length; i++)
+                for (int i = 0; i < getCountLines(); i++)
                 {
-                    lines[i] = sr.ReadLine();
+                    string currentLine = sr.ReadLine();
+                    if(currentLine.Length>0)
+                        lines.Add(currentLine);
                 }
             }
 
