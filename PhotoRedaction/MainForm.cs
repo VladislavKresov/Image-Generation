@@ -70,9 +70,9 @@ namespace PhotoRedaction
                 pictureBoxRight.Size = new Size(pictRightX, pictRightY);
                 comboBoxMode.Enabled = true;
                 changes = new List<int>();
-                BTN_Prev.Enabled = false;
-                BTN_Next.Enabled = false;
-                BTN_SaveAll.Enabled = false;
+                BTN_Prev.Enabled = true;
+                BTN_Next.Enabled = true;
+                BTN_SaveAll.Enabled = true;
                 update();
             }
         }
