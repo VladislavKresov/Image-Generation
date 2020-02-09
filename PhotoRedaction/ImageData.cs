@@ -43,11 +43,6 @@ namespace PhotoRedaction
             return pathes[indx];
         }
 
-        public string[] getPath()
-        {
-            return pathes;
-        }
-
         public List<int> getFrames(int indx)
         {
             return frames[indx];
@@ -58,7 +53,7 @@ namespace PhotoRedaction
             return frames;
         }
 
-        public int getCount()
+        public int getCountOfImages()
         {
             return count;
         }

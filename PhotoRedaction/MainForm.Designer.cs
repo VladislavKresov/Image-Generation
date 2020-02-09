@@ -76,9 +76,9 @@
             this.panelFormBackground.Controls.Add(this.tableLayoutPanel1);
             this.panelFormBackground.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelFormBackground.Location = new System.Drawing.Point(0, 0);
-            this.panelFormBackground.Margin = new System.Windows.Forms.Padding(2);
+            this.panelFormBackground.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panelFormBackground.Name = "panelFormBackground";
-            this.panelFormBackground.Size = new System.Drawing.Size(1049, 521);
+            this.panelFormBackground.Size = new System.Drawing.Size(1399, 641);
             this.panelFormBackground.TabIndex = 0;
             // 
             // tableLayoutPanel1
@@ -90,13 +90,14 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel4, 0, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 7.328605F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 92.67139F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 48F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1049, 521);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 59F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1399, 641);
             this.tableLayoutPanel1.TabIndex = 17;
             // 
             // tableLayoutPanel2
@@ -109,12 +110,13 @@
             this.tableLayoutPanel2.Controls.Add(this.panelRight, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this.panelLeft, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 37);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 46);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 87.12872F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 12.87129F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(1043, 432);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(1391, 531);
             this.tableLayoutPanel2.TabIndex = 18;
             // 
             // flowLayoutPanel2
@@ -122,18 +124,19 @@
             this.flowLayoutPanel2.Controls.Add(this.checkBoxFrames);
             this.flowLayoutPanel2.Controls.Add(this.trackBarLeft);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 379);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(4, 466);
+            this.flowLayoutPanel2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(515, 50);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(687, 61);
             this.flowLayoutPanel2.TabIndex = 18;
             // 
             // checkBoxFrames
             // 
             this.checkBoxFrames.AutoSize = true;
-            this.checkBoxFrames.Location = new System.Drawing.Point(2, 2);
-            this.checkBoxFrames.Margin = new System.Windows.Forms.Padding(2);
+            this.checkBoxFrames.Location = new System.Drawing.Point(3, 2);
+            this.checkBoxFrames.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.checkBoxFrames.Name = "checkBoxFrames";
-            this.checkBoxFrames.Size = new System.Drawing.Size(84, 17);
+            this.checkBoxFrames.Size = new System.Drawing.Size(106, 21);
             this.checkBoxFrames.TabIndex = 14;
             this.checkBoxFrames.Text = "Show marks";
             this.checkBoxFrames.UseVisualStyleBackColor = true;
@@ -141,10 +144,10 @@
             // 
             // trackBarLeft
             // 
-            this.trackBarLeft.Location = new System.Drawing.Point(90, 2);
-            this.trackBarLeft.Margin = new System.Windows.Forms.Padding(2);
+            this.trackBarLeft.Location = new System.Drawing.Point(115, 2);
+            this.trackBarLeft.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.trackBarLeft.Name = "trackBarLeft";
-            this.trackBarLeft.Size = new System.Drawing.Size(319, 45);
+            this.trackBarLeft.Size = new System.Drawing.Size(425, 56);
             this.trackBarLeft.TabIndex = 3;
             this.trackBarLeft.Scroll += new System.EventHandler(this.trackBarLeft_Scroll);
             // 
@@ -154,26 +157,27 @@
             this.flowLayoutPanel3.Controls.Add(this.BTN_Prev);
             this.flowLayoutPanel3.Controls.Add(this.BTN_Next);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(524, 379);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(699, 466);
+            this.flowLayoutPanel3.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(516, 50);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(688, 61);
             this.flowLayoutPanel3.TabIndex = 19;
             // 
             // trackBarRight
             // 
-            this.trackBarRight.Location = new System.Drawing.Point(2, 2);
-            this.trackBarRight.Margin = new System.Windows.Forms.Padding(2);
+            this.trackBarRight.Location = new System.Drawing.Point(3, 2);
+            this.trackBarRight.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.trackBarRight.Name = "trackBarRight";
-            this.trackBarRight.Size = new System.Drawing.Size(319, 45);
+            this.trackBarRight.Size = new System.Drawing.Size(425, 56);
             this.trackBarRight.TabIndex = 3;
             this.trackBarRight.Scroll += new System.EventHandler(this.trackBarRight_Scroll);
             // 
-            // BTN_Prew
+            // BTN_Prev
             // 
-            this.BTN_Prev.Location = new System.Drawing.Point(339, 2);
-            this.BTN_Prev.Margin = new System.Windows.Forms.Padding(16, 2, 2, 2);
-            this.BTN_Prev.Name = "BTN_Prew";
-            this.BTN_Prev.Size = new System.Drawing.Size(76, 28);
+            this.BTN_Prev.Location = new System.Drawing.Point(452, 2);
+            this.BTN_Prev.Margin = new System.Windows.Forms.Padding(21, 2, 3, 2);
+            this.BTN_Prev.Name = "BTN_Prev";
+            this.BTN_Prev.Size = new System.Drawing.Size(101, 34);
             this.BTN_Prev.TabIndex = 5;
             this.BTN_Prev.Text = "Previous";
             this.BTN_Prev.UseVisualStyleBackColor = true;
@@ -181,10 +185,10 @@
             // 
             // BTN_Next
             // 
-            this.BTN_Next.Location = new System.Drawing.Point(419, 2);
-            this.BTN_Next.Margin = new System.Windows.Forms.Padding(2);
+            this.BTN_Next.Location = new System.Drawing.Point(559, 2);
+            this.BTN_Next.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.BTN_Next.Name = "BTN_Next";
-            this.BTN_Next.Size = new System.Drawing.Size(73, 28);
+            this.BTN_Next.Size = new System.Drawing.Size(97, 34);
             this.BTN_Next.TabIndex = 5;
             this.BTN_Next.Text = "Next";
             this.BTN_Next.UseVisualStyleBackColor = true;
@@ -196,10 +200,10 @@
             this.panelRight.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panelRight.Controls.Add(this.pictureBoxRight);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelRight.Location = new System.Drawing.Point(523, 2);
-            this.panelRight.Margin = new System.Windows.Forms.Padding(2);
+            this.panelRight.Location = new System.Drawing.Point(698, 2);
+            this.panelRight.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panelRight.Name = "panelRight";
-            this.panelRight.Size = new System.Drawing.Size(518, 372);
+            this.panelRight.Size = new System.Drawing.Size(690, 458);
             this.panelRight.TabIndex = 0;
             this.panelRight.SizeChanged += new System.EventHandler(this.panelRight_SizeChanged);
             // 
@@ -207,9 +211,9 @@
             // 
             this.pictureBoxRight.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.pictureBoxRight.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxRight.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxRight.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBoxRight.Name = "pictureBoxRight";
-            this.pictureBoxRight.Size = new System.Drawing.Size(518, 370);
+            this.pictureBoxRight.Size = new System.Drawing.Size(691, 455);
             this.pictureBoxRight.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxRight.TabIndex = 0;
             this.pictureBoxRight.TabStop = false;
@@ -220,10 +224,10 @@
             this.panelLeft.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.panelLeft.Controls.Add(this.pictureBoxLeft);
             this.panelLeft.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelLeft.Location = new System.Drawing.Point(2, 2);
-            this.panelLeft.Margin = new System.Windows.Forms.Padding(2);
+            this.panelLeft.Location = new System.Drawing.Point(3, 2);
+            this.panelLeft.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.panelLeft.Name = "panelLeft";
-            this.panelLeft.Size = new System.Drawing.Size(517, 372);
+            this.panelLeft.Size = new System.Drawing.Size(689, 458);
             this.panelLeft.TabIndex = 0;
             this.panelLeft.SizeChanged += new System.EventHandler(this.panelLeft_SizeChanged);
             // 
@@ -231,9 +235,9 @@
             // 
             this.pictureBoxLeft.BackColor = System.Drawing.SystemColors.ActiveBorder;
             this.pictureBoxLeft.Location = new System.Drawing.Point(0, 0);
-            this.pictureBoxLeft.Margin = new System.Windows.Forms.Padding(2);
+            this.pictureBoxLeft.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.pictureBoxLeft.Name = "pictureBoxLeft";
-            this.pictureBoxLeft.Size = new System.Drawing.Size(515, 370);
+            this.pictureBoxLeft.Size = new System.Drawing.Size(687, 455);
             this.pictureBoxLeft.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBoxLeft.TabIndex = 0;
             this.pictureBoxLeft.TabStop = false;
@@ -246,17 +250,18 @@
             this.flowLayoutPanel1.Controls.Add(this.panel1);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 475);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(4, 585);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(1043, 43);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(1391, 52);
             this.flowLayoutPanel1.TabIndex = 16;
             // 
             // BTN_SaveAll
             // 
-            this.BTN_SaveAll.Location = new System.Drawing.Point(949, 2);
-            this.BTN_SaveAll.Margin = new System.Windows.Forms.Padding(16, 2, 2, 2);
+            this.BTN_SaveAll.Location = new System.Drawing.Point(1265, 2);
+            this.BTN_SaveAll.Margin = new System.Windows.Forms.Padding(21, 2, 3, 2);
             this.BTN_SaveAll.Name = "BTN_SaveAll";
-            this.BTN_SaveAll.Size = new System.Drawing.Size(92, 26);
+            this.BTN_SaveAll.Size = new System.Drawing.Size(123, 32);
             this.BTN_SaveAll.TabIndex = 7;
             this.BTN_SaveAll.Text = "Create all";
             this.BTN_SaveAll.UseVisualStyleBackColor = true;
@@ -265,10 +270,10 @@
             // BTN_Cancel
             // 
             this.BTN_Cancel.Enabled = false;
-            this.BTN_Cancel.Location = new System.Drawing.Point(849, 2);
-            this.BTN_Cancel.Margin = new System.Windows.Forms.Padding(2);
+            this.BTN_Cancel.Location = new System.Drawing.Point(1132, 2);
+            this.BTN_Cancel.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.BTN_Cancel.Name = "BTN_Cancel";
-            this.BTN_Cancel.Size = new System.Drawing.Size(82, 26);
+            this.BTN_Cancel.Size = new System.Drawing.Size(109, 32);
             this.BTN_Cancel.TabIndex = 11;
             this.BTN_Cancel.Text = "Cancel";
             this.BTN_Cancel.UseVisualStyleBackColor = true;
@@ -277,10 +282,10 @@
             // BTN_Apply
             // 
             this.BTN_Apply.Enabled = false;
-            this.BTN_Apply.Location = new System.Drawing.Point(769, 2);
-            this.BTN_Apply.Margin = new System.Windows.Forms.Padding(2);
+            this.BTN_Apply.Location = new System.Drawing.Point(1025, 2);
+            this.BTN_Apply.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.BTN_Apply.Name = "BTN_Apply";
-            this.BTN_Apply.Size = new System.Drawing.Size(76, 26);
+            this.BTN_Apply.Size = new System.Drawing.Size(101, 32);
             this.BTN_Apply.TabIndex = 9;
             this.BTN_Apply.Text = "Apply";
             this.BTN_Apply.UseVisualStyleBackColor = true;
@@ -290,18 +295,18 @@
             // 
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.comboBoxMode);
-            this.panel1.Location = new System.Drawing.Point(584, 3);
+            this.panel1.Location = new System.Drawing.Point(778, 4);
+            this.panel1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(180, 39);
+            this.panel1.Size = new System.Drawing.Size(240, 48);
             this.panel1.TabIndex = 15;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(2, 26);
-            this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label1.Location = new System.Drawing.Point(3, 32);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.Size = new System.Drawing.Size(44, 17);
             this.label1.TabIndex = 10;
             this.label1.Text = "Effect";
             // 
@@ -319,10 +324,10 @@
             "Rotate 90",
             "Stretch",
             "Shift"});
-            this.comboBoxMode.Location = new System.Drawing.Point(2, 3);
-            this.comboBoxMode.Margin = new System.Windows.Forms.Padding(2);
+            this.comboBoxMode.Location = new System.Drawing.Point(3, 4);
+            this.comboBoxMode.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.comboBoxMode.Name = "comboBoxMode";
-            this.comboBoxMode.Size = new System.Drawing.Size(178, 21);
+            this.comboBoxMode.Size = new System.Drawing.Size(236, 24);
             this.comboBoxMode.TabIndex = 8;
             this.comboBoxMode.SelectedIndexChanged += new System.EventHandler(this.comboBoxMode_SelectedIndexChanged);
             // 
@@ -331,33 +336,36 @@
             this.flowLayoutPanel4.Controls.Add(this.menuStrip1);
             this.flowLayoutPanel4.Controls.Add(this.labelPath);
             this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 3);
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(4, 4);
+            this.flowLayoutPanel4.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(1043, 28);
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(1391, 34);
             this.flowLayoutPanel4.TabIndex = 19;
             // 
             // menuStrip1
             // 
+            this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(45, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(56, 28);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
+            this.fileToolStripMenuItem.BackColor = System.Drawing.SystemColors.ControlLight;
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.openToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.openToolStripMenuItem.Text = "Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
             // 
@@ -365,21 +373,20 @@
             // 
             this.labelPath.AutoSize = true;
             this.labelPath.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.labelPath.Location = new System.Drawing.Point(47, 11);
-            this.labelPath.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelPath.Location = new System.Drawing.Point(59, 11);
             this.labelPath.Name = "labelPath";
-            this.labelPath.Size = new System.Drawing.Size(0, 13);
+            this.labelPath.Size = new System.Drawing.Size(0, 17);
             this.labelPath.TabIndex = 6;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1049, 521);
+            this.ClientSize = new System.Drawing.Size(1399, 641);
             this.Controls.Add(this.panelFormBackground);
-            this.Margin = new System.Windows.Forms.Padding(2);
-            this.MinimumSize = new System.Drawing.Size(995, 529);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.MinimumSize = new System.Drawing.Size(1321, 640);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);

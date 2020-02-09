@@ -51,62 +51,76 @@ namespace PhotoRedaction
                 BTN_Next.Enabled = false;
                 BTN_SaveAll.Enabled = false;
             }
-            currentNumber = 0;
         }
 
         private void init()
         {
-            if (File.Exists(mainFile.getPath()))
+            if (pathExists(mainFile.getPath()))
             {
-                showFrames = checkBoxFrames.Checked;               
-                lines = mainFile.getAllLines().ToArray();
-                imageData = new ImageData(lines);
-                countPictures = imageData.getCount();
-                pictLeftX = panelLeft.Width;
-                pictLeftY = panelLeft.Height;
-                pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
-                pictRightX = panelRight.Width;
-                pictRightY = panelRight.Height;
-                pictureBoxRight.Size = new Size(pictRightX, pictRightY);
-                comboBoxMode.Enabled = true;
-                changes = new List<int>();
-                BTN_Prev.Enabled = true;
-                BTN_Next.Enabled = true;
-                BTN_SaveAll.Enabled = true;
+                initVariables();
+                initViews();
                 update();
             }
         }
 
+        private void initVariables()
+        {
+            currentNumber = 0;
+            showFrames = checkBoxFrames.Checked;
+            lines = mainFile.getAllLines().ToArray();
+            imageData = new ImageData(lines);
+            countPictures = imageData.getCountOfImages();
+            pictLeftX = panelLeft.Width;
+            pictLeftY = panelLeft.Height;
+            pictRightX = panelRight.Width;
+            pictRightY = panelRight.Height;
+            changes = new List<int>();
+        }
+
+        private void initViews()
+        {
+            pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
+            pictureBoxRight.Size = new Size(pictRightX, pictRightY);
+            comboBoxMode.Enabled = true;
+            BTN_Prev.Enabled = true;
+            BTN_Next.Enabled = true;
+            BTN_SaveAll.Enabled = true;
+        }
+
         private void update()
         {
-            if (countPictures > 0 && countPictures > currentNumber)
+            if (countPictures > currentNumber)
             {
                 parseCurrent();
-                redactCurrentImage();
+                currentFrames = redactImageAndFrames(currentRedactedImage,changes,currentFrames);
+                drawFrames(showFrames);
                 showImages();
                 labelPath.Text = currentPath;
             }
         }
 
-        private void drawFrames()
+        private void drawFrames(bool show)
         {
-            Rectangle[] rects = new Rectangle[4];
-            int j = 0;
-            for (int i = 0; i < rects.Length; i++)
+            if (show)
             {
-                int with = currentFrames[j + 2] - currentFrames[j];
-                int height = currentFrames[j + 3] - currentFrames[j+1];
-                rects[i] = new Rectangle(currentFrames[j], currentFrames[j+1], with, height);
-                j += 4;
+                Rectangle[] rects = new Rectangle[4];
+                int j = 0;
+                for (int i = 0; i < rects.Length; i++)
+                {
+                    int with = currentFrames[j + 2] - currentFrames[j];
+                    int height = currentFrames[j + 3] - currentFrames[j + 1];
+                    rects[i] = new Rectangle(currentFrames[j], currentFrames[j + 1], with, height);
+                    j += 4;
+                }
+                ImageController.drawFrames(currentRedactedImage, rects);
             }
-            ImageController.drawFrames(currentRedactedImage, rects);
         }
 
-        private void redactCurrentImage()
+        private List<int> redactImageAndFrames(Bitmap img, List<int> redactionTypes, List<int> frames)
         {
-            for (int i = 0; i < changes.Count; i++)
+            for (int i = 0; i < redactionTypes.Count; i++)
             {
-                switch (changes.ElementAt(i))
+                switch (redactionTypes[i])
                 {
                     case 0://без эффектов
                         changes.Clear();
@@ -114,37 +128,35 @@ namespace PhotoRedaction
                         update();
                         break;
                     case 1://Размытие
-                        ImageController.blur(currentRedactedImage);
+                        ImageController.blur(img);
                         break;
                     case 2://Осветление
-                        ImageController.lighten(currentRedactedImage);
+                        ImageController.lighten(img);
                         break;
                     case 3://Затемнение
-                        ImageController.darken(currentRedactedImage);
+                        ImageController.darken(img);
                         break;
                     case 4://оттенки серого
-                        ImageController.gray(currentRedactedImage);
+                        ImageController.gray(img);
                         break;
                     case 5://Блики
-                        ImageController.glare(currentRedactedImage);
+                        ImageController.glare(img);
                         break;
                     case 6://Поворот на 90
-                        ImageController.rotate_90(currentRedactedImage);
-                        currentFrames = rotateFrame_90(currentFrames);
+                        ImageController.rotate_90(img);
+                        frames = rotateFrame_90(frames);
                         break;
                     case 7://Растяжение
-                        ImageController.stretch(currentRedactedImage);
+                        ImageController.stretch(img);
                         break;
                     case 8://Сдвиг
-                        ImageController.shift(currentRedactedImage);
+                        ImageController.shift(img);
                         break;
                     default:
                         break;
                 }
             }
-
-            if (showFrames)
-                drawFrames();
+            return frames;
         }
 
         private List<int> rotateFrame_90(List<int> coords)
@@ -179,7 +191,7 @@ namespace PhotoRedaction
                 currentImage = new Bitmap(currentPath);
                 currentRedactedImage = new Bitmap(currentPath);
                 currentFrames = imageData.getFrames(currentNumber);
-            } 
+            }
             catch
             {
                 MessageBox.Show("изображение не найдено: " + currentPath, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -188,90 +200,82 @@ namespace PhotoRedaction
 
         private async void saveAllPictures()
         {
-            BTN_SaveAll.Text = "Сохранение...";
-            panelFormBackground.Enabled = false;
-            await Task.Run(() =>
+            if (pathExists(mainFile.getPath()))
             {
-                string pathToSave = mainFile.getPath();
-                string directory, fileName;
-                if (File.Exists(pathToSave))
-                {
-                    directory = Path.GetDirectoryName(pathToSave);
-                    fileName = Path.GetFileName(pathToSave);
-                }
-                else
-                {
-                    directory = Directory.CreateDirectory(Path.GetDirectoryName(mainFile.getPath())).FullName;
-                    fileName = @"new data.txt";
-                }
-                using (StreamWriter stream = new StreamWriter(directory + @"\" + fileName, true))
-                {                
-                    stream.WriteLine("");
-                    for (int i = 0; i < imageData.getCount(); i++)
-                    {
-                        Bitmap curImg = new Bitmap(imageData.getPath(i));
-                        List<int> curCoords = imageData.getFrames(i);
+                BTN_SaveAll.Text = "Saving...";
+                enableViews(false);
 
-                        for (int j = 0; j < changes.Count; j++)
+                await Task.Run(() =>
+                {
+                    string pathToSave = mainFile.getPath();
+                    string directory = getDirectoryToSave(pathToSave);
+                    using (StreamWriter stream = new StreamWriter(pathToSave, true))
+                    {
+                        stream.WriteLine("");
+                        for (int i = 0; i < imageData.getCountOfImages(); i++)
                         {
-                            switch (changes[j])
+                            if (pathExists(imageData.getPath(i)))
                             {
-                                case 0://без эффектов
-                                    changes.Clear();
-                                    break;
-                                case 1://Размытие
-                                    ImageController.blur(curImg);
-                                    break;
-                                case 2://Осветление
-                                    ImageController.lighten(curImg);
-                                    break;
-                                case 3://Затемнение
-                                    ImageController.darken(curImg);
-                                    break;
-                                case 4://оттенки серого
-                                    ImageController.gray(curImg);
-                                    break;
-                                case 5://Блики
-                                    ImageController.glare(curImg);
-                                    break;
-                                case 6://Поворот на 90
-                                    ImageController.rotate_90(curImg);
-                                    curCoords = rotateFrame_90(curCoords);
-                                    break;
-                                case 7://Растяжение
-                                    ImageController.stretch(curImg);
-                                    break;
-                                case 8://Сдвиг
-                                    ImageController.shift(curImg);
-                                    break;
-                                default:
-                                    break;
+                                Bitmap curImg = new Bitmap(imageData.getPath(i));
+                                List<int> curCoords = imageData.getFrames(i);
+                                curCoords = redactImageAndFrames(curImg, changes, curCoords);
+                                string framesCoords = parseCoordinatesToString(curCoords);
+                                string imgPath = createImagePath(directory);
+                                curImg.Save(imgPath);
+                                stream.WriteLine(imgPath + framesCoords);
                             }
                         }
-
-                        string coordinates = "";
-                        for (int k = 0; k < curCoords.Count; k++)
-                        {
-                            coordinates += "," + curCoords[k];
-                        }
-
-                        string imgPath = directory + @"\mod" + i + ".jpg";
-                        while (File.Exists(imgPath))
-                        {
-                            int k = 1;
-                            imgPath = directory + @"\" + Path.GetFileNameWithoutExtension(imgPath) + "_" + k + ".jpg";
-                            k++;
-                        }
-                            
-                        curImg.Save(imgPath);
-                        stream.WriteLine(imgPath+coordinates);
-
                     }
-                }
-            });
-            changes.Clear();
-            BTN_SaveAll.Text = "Сохранить все";
-            panelFormBackground.Enabled = true;
+                });
+
+                changes.Clear();
+                BTN_SaveAll.Text = "Create all";
+                enableViews(true);
+            }
+            else
+            {
+                MessageBox.Show("Не указан файл разметки: " + currentPath, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool pathExists(string path)
+        {
+            return File.Exists(path);
+        }
+
+        private string getDirectoryToSave(string path)
+        {
+            return Path.GetDirectoryName(path);
+        }
+
+        private void enableViews(bool enable)
+        {
+            if (enable)
+                panelFormBackground.Enabled = true;
+            else
+                panelFormBackground.Enabled = false;
+        }
+
+        private string parseCoordinatesToString(List<int> coords)
+        {
+            string coordinates = "";
+            for (int k = 0; k < coords.Count; k++)
+            {
+                coordinates += "," + coords[k];
+            }
+            return coordinates;
+        }
+
+        private string createImagePath(string directory)
+        {
+            int k = 1;
+            string path = directory + @"\mod" + k + ".jpg";
+            while (File.Exists(path))
+            {
+                path = directory + @"\" + Path.GetFileNameWithoutExtension(path) + "_" + k + ".jpg";
+                k++;
+            }
+            return path;
         }
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
