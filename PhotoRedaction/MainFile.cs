@@ -23,6 +23,12 @@ namespace PhotoRedaction
                 stream.Write(PATH);
         }
 
+        public void clearSaves()
+        {
+            using (StreamWriter stream = new StreamWriter(SAVEFILE_PATH, false))
+                stream.Write(String.Empty);
+        }
+
         public static string pullSavesLine()
         {
             if (File.Exists(SAVEFILE_PATH))
