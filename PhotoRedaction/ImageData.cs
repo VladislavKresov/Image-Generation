@@ -43,6 +43,11 @@ namespace PhotoRedaction
             return pathes[indx];
         }
 
+        public string[] getPathes()
+        {
+            return pathes;
+        }
+
         public List<int> getFrames(int indx)
         {
             return frames[indx];

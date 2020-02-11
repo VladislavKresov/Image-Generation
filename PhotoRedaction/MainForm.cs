@@ -24,7 +24,7 @@ namespace PhotoRedaction
         private byte[] currentImage;
         private byte[] currentRedactedImage;
         private ImageData imageData;
-        private TargetData targetFrames;
+        private TargetData targetData;
         private string currentPath;
         private List<int> currentFrames;
         private List<int> changes;
@@ -35,7 +35,6 @@ namespace PhotoRedaction
             InitializeComponent();
             pullSaves();
             init();
-            checkBoxFrames.Checked = true;
         }
 
         private void pullSaves()
@@ -58,9 +57,18 @@ namespace PhotoRedaction
         {
             if (pathExists(mainFile.getPath()))
             {
-                initVariables();
-                initViews();
-                update();
+                try
+                {
+                    initVariables();
+                    initViews();
+                    update();
+                }
+                catch
+                {
+                    MessageBox.Show("File damaged: " + currentPath, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    mainFile.clearSaves();
+                    pullSaves();
+                }
             }
             else
             {
@@ -68,6 +76,8 @@ namespace PhotoRedaction
                 BTN_Prev.Enabled = false;
                 BTN_Next.Enabled = false;
                 BTN_SaveAll.Enabled = false;
+                pictureBoxLeft.Visible = false;
+                pictureBoxRight.Visible = false;
             }
         }
 
@@ -77,54 +87,61 @@ namespace PhotoRedaction
             showFrames = checkBoxFrames.Checked;
             lines = mainFile.getAllLines().ToArray();
             imageData = new ImageData(lines);
-            targetFrames = new TargetData(imageData.getAllFrames());
+            targetData = new TargetData(imageData.getAllFrames(), imageData.getPathes());
             countPictures = imageData.getCountOfImages();
             pictLeftX = panelLeft.Width;
             pictLeftY = panelLeft.Height;
             pictRightX = panelRight.Width;
             pictRightY = panelRight.Height;
             changes = new List<int>();
+            checkBoxFrames.Checked = true;
         }
 
         private void initViews()
-        {
+        {          
             pictureBoxLeft.Size = new Size(pictLeftX, pictLeftY);
             pictureBoxRight.Size = new Size(pictRightX, pictRightY);
             comboBoxMode.Enabled = true;
             BTN_Prev.Enabled = true;
             BTN_Next.Enabled = true;
             BTN_SaveAll.Enabled = true;
+            pictureBoxLeft.Visible = true;
+            pictureBoxRight.Visible = true;
         }
 
         private void update()
         {
-            if (countPictures > currentNumber)
+            try
             {
                 parseCurrent();
                 currentRedactedImage = redactImage(currentRedactedImage, changes, currentNumber);
-                currentRedactedImage = drawFrames(currentRedactedImage,currentFrames,showFrames);
+                currentFrames = targetData.getFrames(currentNumber);
+                currentRedactedImage = drawFrames(currentRedactedImage, currentFrames, showFrames);
                 showImages();
                 labelPath.Text = currentPath;
             }
+            catch(FileNotFoundException)
+            {
+                MessageBox.Show("File not found: " + currentPath, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private byte[] drawFrames(byte[] image,List<int>frames,bool show)
+        private void parseCurrent()
         {
-            if (show)
+            try
             {
-                Rectangle[] rects = new Rectangle[4];
-                int j = 0;                
-                for (int i = 0; i < rects.Length; i++)
-                {
-                    int with = frames[j + 2] - frames[j];
-                    int height = frames[j + 3] - frames[j + 1];
-                    rects[i] = new Rectangle(frames[j], frames[j + 1], with, height);
-                    j += 4;
-                }
-                return ImageController.drawFrames(image, rects);
+                targetData.setFrames(imageData.getAllFrames());
+                currentPath = imageData.getPath(currentNumber);
+                using(Bitmap bitmap = new Bitmap(currentPath))
+                    currentImage = bitmapToByte(bitmap);
+                currentRedactedImage = currentImage;                
+                currentFrames = targetData.getFrames(currentNumber);                
             }
-            else
-                return image;
+            catch
+            {
+                throw new FileNotFoundException();
+                
+            }
         }
 
         private byte[] redactImage(byte[] image, List<int> redactionTypes, int currentNumber)
@@ -145,11 +162,29 @@ namespace PhotoRedaction
                         image = ImageController.shadowing(image,5);
                         break;                    
                     case 3://crop
-                        image = cropToSquare(image, currentNumber);                         
+                        int width, height;
+                        using(Bitmap img = byteToBitmap(image))
+                        {
+                            width = img.Width;
+                            height = img.Height;
+                        }
+                        if(width>=height)
+                            image = cropToSquare(image, currentNumber);
+                        else
+                        {
+                            rotateFrames_90_Left(currentNumber, image);
+                            image = ImageController.rotate(image, -90f);
+
+                            image = cropToSquare(image,currentNumber);
+
+                            rotateFrames_90_Right(currentNumber, image);
+                            image = ImageController.rotate(image, 90f);
+                        }
                         break;
-                    case 4://rotate 90
-                        image = ImageController.rotate(image,90f);
-                        break;                    
+                    case 4://rotate 90 left
+                        rotateFrames_90_Left(currentNumber, image);
+                        image = ImageController.rotate(image, -90f);
+                        break;
                     case 5://pixelize
                         image = ImageController.quality(image,25);
                         break;
@@ -160,49 +195,23 @@ namespace PhotoRedaction
             return image;
         }
 
-        private byte[] cropToSquare(byte[] image, int currentNumber)
+        private byte[] drawFrames(byte[] image,List<int>frames,bool show)
         {
-            int width = byteToBitmap(image).Width;
-            int height = byteToBitmap(image).Height;
-
-            if (width == height)
-                return image;
-
-            List<int> frames = targetFrames.getFrames(currentNumber);
-            int x = width - height;
-            int y = 0;
-            int minCoordinateX = width;
-            int maxCoordinateX = 0;
-            for (int currentCoordinateX = 0; currentCoordinateX < frames.Count; currentCoordinateX += 4)
+            if (show)
             {
-                if (frames[currentCoordinateX] < minCoordinateX && frames[currentCoordinateX]!= frames[currentCoordinateX+2])
-                    minCoordinateX = frames[currentCoordinateX];
-                if (frames[currentCoordinateX] > maxCoordinateX)
-                    maxCoordinateX = frames[currentCoordinateX];
-            }
-
-            if (minCoordinateX < x)
-            {
-                x = 0;
-                int rightBorder = x + height;
-                if (maxCoordinateX > rightBorder)
-                    for (int currentCoordinateX = 0; currentCoordinateX < frames.Count; currentCoordinateX += 2)
-                    {
-                        if (frames[currentCoordinateX] > rightBorder)
-                            frames[currentCoordinateX] = rightBorder;
-                    }
+                Rectangle[] rects = new Rectangle[4];
+                int currentX = 0;                
+                for (int countFrames = 0; countFrames < rects.Length; countFrames++)
+                {
+                    int with = Math.Abs(frames[currentX + 2] - frames[currentX]);
+                    int height = Math.Abs(frames[currentX + 3] - frames[currentX + 1]);
+                    rects[countFrames] = new Rectangle(frames[currentX], frames[currentX + 1], with, height);
+                    currentX += 4;
+                }
+                return ImageController.drawFrames(image, rects);
             }
             else
-            {
-                for (int currentCoordinateX = 0; currentCoordinateX < frames.Count; currentCoordinateX += 2)
-                {
-                    frames[currentCoordinateX] -= x;
-                }
-            }
-
-            targetFrames.setFrames(frames, currentNumber);
-            image = ImageController.crop(image, x, y, height, height);
-            return image;
+                return image;
         }
 
         private void showImages()
@@ -214,23 +223,7 @@ namespace PhotoRedaction
             }
             catch
             {
-                MessageBox.Show("Невозможно открыть файл: " + currentPath, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void parseCurrent()
-        {
-            try
-            {
-                currentPath = imageData.getPath(currentNumber);
-                using(Bitmap bitmap = new Bitmap(currentPath))
-                    currentImage = bitmapToByte(bitmap);
-                currentRedactedImage = currentImage;
-                currentFrames = imageData.getFrames(currentNumber);
-            }
-            catch
-            {
-                MessageBox.Show("изображение не найдено: " + currentPath, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw new FileNotFoundException();
             }
         }
 
@@ -240,20 +233,23 @@ namespace PhotoRedaction
             {
                 BTN_SaveAll.Text = "Saving...";
                 enableViews(false);
-
+                targetData.setFrames(imageData.getAllFrames());
+                
                 await Task.Run(() =>
                 {
+                    setLastLinePositionInFile(mainFile.getPath());
                     string pathToSave = mainFile.getPath();
                     string directory = getDirectoryToSave(pathToSave);
                     using (StreamWriter stream = new StreamWriter(pathToSave, true))
-                    {   
+                    {
+                        stream.WriteLine(String.Empty);
                         for (int currentImageNumber = 0; currentImageNumber < imageData.getCountOfImages(); currentImageNumber++)
                         {
                             if (pathExists(imageData.getPath(currentImageNumber)))
                             {                                
                                 byte[] curImg = bitmapToByte(new Bitmap(imageData.getPath(currentImageNumber)));
                                 curImg = redactImage(curImg, changes, currentImageNumber);
-                                List<int> curCoords = targetFrames.getFrames(currentImageNumber);
+                                List<int> curCoords = targetData.getFrames(currentImageNumber);
                                 string framesCoordsString = parseCoordinatesToString(curCoords);
                                 string imgPath = createImagePath(directory);
                                 using (MemoryStream ms = new MemoryStream(curImg))
@@ -268,14 +264,129 @@ namespace PhotoRedaction
 
                 changes.Clear();
                 BTN_SaveAll.Text = "Create all";
+                BTN_Cancel.Enabled = false;
                 enableViews(true);
                 mainFile = new MainFile(mainFile.getPath());
                 init();
             }
             else
             {
-                MessageBox.Show("Не указан файл разметки: " + currentPath, "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("File unaviable: " + currentPath, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private byte[] cropToSquare(byte[] image, int currentNumber)
+        {
+            int width;
+            int height;
+            using (Bitmap img = byteToBitmap(image))
+            {
+               width = img.Width;
+               height = img.Height;
+            }            
+            List<int> frames = new List<int>(targetData.getFrames(currentNumber));
+            int x = width - height;
+            int y = 0;
+
+            int minFrameCoordinateX = width;
+            int maxFrameCoordinateX = 0;
+            for (int currentLeftSideX = 0; currentLeftSideX < frames.Count; currentLeftSideX += 4)
+            {
+                if (frames[currentLeftSideX] < minFrameCoordinateX && frames[currentLeftSideX]!= frames[currentLeftSideX+2])
+                    minFrameCoordinateX = frames[currentLeftSideX];
+                if (frames[currentLeftSideX+2] > maxFrameCoordinateX)
+                    maxFrameCoordinateX = frames[currentLeftSideX+2];
+            }
+
+            if (minFrameCoordinateX < x)
+            {
+                x = 0;
+                int rightBorder = x + height;
+                if (maxFrameCoordinateX > rightBorder)
+                    for (int currentSideX = 0; currentSideX < frames.Count; currentSideX += 2)
+                    {
+                        if (frames[currentSideX] > rightBorder)
+                            frames[currentSideX] = rightBorder;
+                    }
+            }
+            else
+            {
+                for (int currentSideX = 0; currentSideX < frames.Count; currentSideX += 2)
+                {
+                    if (frames[currentSideX] >= x)
+                        frames[currentSideX] -= x;
+                    else
+                        frames[currentSideX] = 0;
+                }
+            }
+
+            targetData.setFrames(frames,currentNumber);
+            image = ImageController.crop(image, x, y, height, height);
+            return image;
+        }
+
+        private void rotateFrames_90_Left(int currentNumber, byte[] image)
+        {
+            List<int> frames = new List<int>(targetData.getFrames(currentNumber));
+            List<int> newFrames = new List<int>();
+            int width;
+            int height;
+            using (Bitmap img = byteToBitmap(image))
+            {
+                width = img.Width;
+                height= img.Height;
+            }
+            for (int currentCoordinate = 0; currentCoordinate < frames.Count; currentCoordinate+=2)
+            {
+                int newX = frames[currentCoordinate+1];
+                int newY = width - frames[currentCoordinate];
+                newFrames.Add(newX);
+                newFrames.Add(newY);
+            }
+
+            for (int currentFrameY = 1; currentFrameY < newFrames.Count; currentFrameY += 4)
+            {
+                int rem = newFrames[currentFrameY];
+                newFrames[currentFrameY] = newFrames[currentFrameY + 2];
+                newFrames[currentFrameY + 2] = rem;
+            }
+
+            targetData.setFrames(newFrames, currentNumber);
+        }
+
+        private void rotateFrames_90_Right(int currentNumber, byte[] image)
+        {
+            List<int> frames = new List<int>(targetData.getFrames(currentNumber));
+            List<int> newFrames = new List<int>();
+            int width;
+            int height;
+            using (Bitmap img = byteToBitmap(image))
+            {
+                width = img.Width;
+                height = img.Height;
+            }
+            for (int currentCoordinate = 0; currentCoordinate < frames.Count; currentCoordinate += 2)
+            {
+                int newX = height - frames[currentCoordinate + 1];
+                int newY = frames[currentCoordinate];
+                newFrames.Add(newX);
+                newFrames.Add(newY);
+            }
+
+            for (int currentFrameX = 0; currentFrameX < newFrames.Count; currentFrameX += 4)
+            {
+                int rem = newFrames[currentFrameX];
+                newFrames[currentFrameX] = newFrames[currentFrameX + 2];
+                newFrames[currentFrameX + 2] = rem;
+            }
+
+            targetData.setFrames(newFrames, currentNumber);
+        }
+
+        private void setLastLinePositionInFile(string path)
+        {
+            using (FileStream fileStream = new FileStream(path, FileMode.Open))            
+                fileStream.Seek(0, SeekOrigin.End);                          
         }
 
         private byte[] bitmapToByte(Bitmap img)
@@ -306,10 +417,7 @@ namespace PhotoRedaction
 
         private void enableViews(bool enable)
         {
-            if (enable)
-                panelFormBackground.Enabled = true;
-            else
-                panelFormBackground.Enabled = false;
+            panelFormBackground.Enabled = enable;
         }
 
         private string parseCoordinatesToString(List<int> coords)
@@ -427,7 +535,7 @@ namespace PhotoRedaction
                 }
                 catch
                 {
-                    MessageBox.Show("Невозможно открыть выбранный файл", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("File unaviable", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
